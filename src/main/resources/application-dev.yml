@@ -1,0 +1,39 @@
+server:
+  # 端口号
+  port: 5081
+  context-path: /histool
+#jasypt:
+#  encryptor:
+#    password: wlzx201809
+spring:
+  mvc:
+    static-path-pattern: /**
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,\
+      classpath:/static/,classpath:/public/,file:${imageDir}
+  # 数据源配置
+  datasource:
+    driver_class_name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@172.16.10.99:1521:orcl
+    username: *
+    password: *
+  # spring data jpa配置
+  #  jpa:
+  #    hibernate:
+  #      # 实体类有更新时，数据库表更新
+  #      ddl-auto: update
+  #    show-sql: true
+  #    format_sql: true
+  #    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  http:
+    # 过滤字符编码
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+logging:
+  config: classpath:logback.xml
