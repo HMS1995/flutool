@@ -6,6 +6,7 @@
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</pattern>
         </layout>
+
     </appender>
 
     <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -55,7 +56,7 @@
     <logger name="java.sql.PreparedStatement" level="DEBUG"/>
     <root>
         <!-- 如果需要开启查看SQL,把INFO改为DEBUG -->
-        <level value="debug"/>
+        <level value="info"/>
         <appender-ref ref="stdout"/>
         <appender-ref ref="logfile"/>
         <appender-ref ref="errorlogfile"/>

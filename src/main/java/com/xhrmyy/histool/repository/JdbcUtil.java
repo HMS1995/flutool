@@ -1,5 +1,7 @@
 package com.xhrmyy.histool.repository;
 
+import com.xhrmyy.histool.entity.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
@@ -14,23 +16,15 @@ import java.util.Properties;
 @Component
 public class JdbcUtil {
 
-    private static Properties p = new Properties();
+    @Autowired
+    private static DataSource dataSource;
 
-    static{
-        try {
-            InputStream is = Thread.currentThread().
-                    getContextClassLoader().getResourceAsStream("datasource.properties");
-            p.load(is);
-            Class.forName(p.getProperty("jdbc.driverClassName"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public static Connection getConnection(){
         try {
-            return DriverManager.getConnection(p.getProperty("jdbc.url"),
-                    p.getProperty("jdbc.username"),p.getProperty("jdbc.password"));
+            Class.forName(dataSource.getDriver_class_name());
+            return DriverManager.getConnection(dataSource.getUrl(),
+                   dataSource.getUsername(),dataSource.getPassword());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
