@@ -4,9 +4,9 @@
 1. 修改数据源（本项目使用oracle，如果使用其他数据库，则自行修改POM文件数据库驱动及class_name）  
 在src/main/resource目录下application-dev.yml文件,修改为自己HIS数据库的URL，username，password   
 2. 修改查询SQL语句  
-在`com.xhrmyy.histool.repository.QueryUtil` 中，修改SQL，本医院已经自动将查询数据日期修改为大于7天前,即`sysdate-7`  
+在`com.xhrmyy.histool.repository.QueryUtil` 中，修改为自己医院的查询SQL，本医院已经自动将查询数据日期修改为大于7天前,即`sysdate-7`  
 3. 创建/修改导出数据文件夹  
-在`com.xhrmyy.histool.service.impl.QueueServiceImpl` 中，修改导出文件名或目录。注：必须创建导出文件夹  
+在`com.xhrmyy.histool.service.impl.QueueServiceImpl` 中，修改导出文件名或目录。注：必须先创建导出文件夹  
 4. 修改定时任务执行时间  
 在`com.xhrmyy.histool.task.ExportCSVTask` 中, 修改执行任务时间。
 `@Scheduled(cron = "0 0 17 * * ?")` 此表达式意为每日17点执行该任务
