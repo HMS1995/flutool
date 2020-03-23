@@ -1,7 +1,7 @@
 # flutool
 全国流感医疗服务监测系统CSV文件导出工具
 ## 使用步骤
-1. 修改数据源（本项目使用oracle，如果使用其他数据库，则自行修改POM文件数据库驱动及class_name）  
+1. 修改数据源（本医院使用重庆中联HIS，数据库为oracle，如果使用其他数据库，则自行修改POM文件数据库驱动及class_name）  
 在src/main/resource目录下application-dev.yml文件,修改为自己HIS数据库的URL，username，password   
 2. 修改查询SQL语句  
 在`com.xhrmyy.histool.repository.QueryUtil` 中，修改为自己医院的查询SQL，本医院已经自动将查询数据日期修改为大于7天前,即`sysdate-7`  
