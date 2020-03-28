@@ -9,7 +9,7 @@
 在`com.xhrmyy.histool.service.impl.QueueServiceImpl` 中，修改导出文件名或目录。注：必须先创建导出文件夹  
 **4. 修改定时任务执行时间**  
 在`com.xhrmyy.histool.task.ExportCSVTask` 中, 修改执行任务时间。
-`@Scheduled(cron = "0 0 17 * * ?")` 此表达式意为每日17点执行该任务
+`@Scheduled(cron = "0 0 17 * * ?")` 此表达式意为每日17点执行该任务  
 **5. 运行程序**  
 本程序有两种运行方式，一是打包成war包，丢到tomcat服务器中运行（创建了计划任务），二是执行运行test包中的Test main方法，一次性运行导出（不会创建计划任务）。以后可能会更新一个打包成Jar包的运行方式。  
 **6. 配合全国流感医疗服务官网提供的前置机程序，实现每天全自动上传。**
