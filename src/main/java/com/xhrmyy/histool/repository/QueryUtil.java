@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -219,7 +218,7 @@ public class QueryUtil {
                 "               null as 重症监护室名称5,\n" +
                 "               null as 进入时间5,\n" +
                 "               null as 退出时间5,\n" +
-                "               nvl((select 编码 from 医疗付款方式 where 名称 = a.医疗付款方式),\n" +
+                "               nvl((select substr(编码,1,1) from 医疗付款方式 where 名称 = a.医疗付款方式),\n" +
                 "                   '7') as 医疗费用支付方式代码,\n" +
                 "               (select nvl(sum(b1.实收金额), 0)\n" +
                 "                  from 病人医嘱记录 a1, 门诊费用记录 b1, 病人挂号记录 c1\n" +
@@ -317,7 +316,7 @@ public class QueryUtil {
                 "               null as 重症监护室名称5,\n" +
                 "               null as 进入时间5,\n" +
                 "               null as 退出时间5,\n" +
-                "               nvl((select 编码 from 医疗付款方式 where 名称 = a.医疗付款方式),\n" +
+                "               nvl((select substr(编码,1,1) from 医疗付款方式 where 名称 = a.医疗付款方式),\n" +
                 "                   '7') as 医疗费用支付方式代码,\n" +
                 "               null as 总费用,\n" +
                 "               null as 挂号费,\n" +
@@ -757,7 +756,7 @@ public class QueryUtil {
                 "               '新晃侗族自治县人民医院' as 机构名称, --\n" +
                 "               null as 医疗保险手册,\n" +
                 "               null as 健康卡号,\n" +
-                "               nvl((select 编码 from 医疗付款方式 where 名称 = a.医疗付款方式),\n" +
+                "               nvl((select substr(编码,1,1) from 医疗付款方式 where 名称 = a.医疗付款方式),\n" +
                 "                   '7') as 医疗付款方式,\n" +
                 "               b.主页id as 住院次数, --\n" +
                 "               b.住院号 as 病案号, --\n" +
