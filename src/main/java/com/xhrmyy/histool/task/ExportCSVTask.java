@@ -16,7 +16,7 @@ public class ExportCSVTask {
     QueueService queueService;
     private static final Logger log = LoggerFactory.getLogger(ExportCSVTask.class);
     // 定时任务,每天17点00运行
-    @Scheduled(cron = "0 0 17 * * ?")
+    @Scheduled(cron = "0 00 17 * * ?")
     public void export() {
         try {
             log.info("开始执行导出csv任务");

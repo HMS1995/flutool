@@ -22,7 +22,6 @@ public class QueryUtil {
 
     /**
      * 获取用药记录数据
-     * @return
      */
     public List<PDR> getPDRInfo() {
 
@@ -97,7 +96,6 @@ public class QueryUtil {
 
     /**
      * 获取门急诊和在院流感病例数据
-     * @return
      */
     public List<FLU> getFLUInfo() {
 
@@ -337,7 +335,6 @@ public class QueryUtil {
 
     /**
      * 获取出院小结数据
-     * @return
      */
     public List<HDA> getHDAInfo() {
 
@@ -402,7 +399,6 @@ public class QueryUtil {
 
     /**
      * 获取出院数据
-     * @return
      */
     public List<HQMS> getHQMSInfo() {
 
@@ -1174,7 +1170,6 @@ public class QueryUtil {
 
     /**
      * 获取检验数据
-     * @return
      */
     public List<LIS> getLISInfo() {
 
@@ -1252,6 +1247,355 @@ public class QueryUtil {
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(LIS.class));
     }
 
+    /**
+     * 获取诊疗处方记录
+     *
+     * @return
+     */
+    public List<Drug> getDrugInfo() {
+        String sql = "select distinct \n" +
+                "就诊卡号 as P7502,\n" +
+                "就诊日期 as P7506,\n" +
+                "门诊就诊流水号 as P7000,\n" +
+                "姓名 as P4,\n" +
+                "处方号 as P7800,\n" +
+                "处方开具时间 as P7801,\n" +
+                "处方类别代码 as P7802,\n" +
+                "处方项目分类代码 as P7803,\n" +
+                "处方项目分类名称 as P7804,\n" +
+                "处方明细代码 as P7805,\n" +
+                "处方明细名称 as P7806,\n" +
+                "中药类别名称 as P7807,\n" +
+                "中药类别代码 as P7808,\n" +
+                "草药脚注 as P7809,\n" +
+                "药物类型代码 as P7810,\n" +
+                "药物类型 as P7811,\n" +
+                "药物剂型代码 as P7812,\n" +
+                "药物剂型名称 as P7813,\n" +
+                "药品规格 as P7814,\n" +
+                "药物使用频率 as P7815,\n" +
+                "药物使用总剂量 as P7816,\n" +
+                "药物使用次剂量 as P7817,\n" +
+                "药物使用剂量单位 as P7818,\n" +
+                "药物使用途径代码 as P7819,\n" +
+                "药物使用途径 as P7820,\n" +
+                "皮试判别 as P7821,\n" +
+                "用药开始时间 as P7822,\n" +
+                "用药停止日期时间 as P7823,\n" +
+                "用药天数 as P7824,\n" +
+                "是否主药 as P7825,\n" +
+                "是否加急 as P7826,\n" +
+                "科室代码 as P7827,\n" +
+                "科室名称 as P7828,\n" +
+                "是否统一采购药品 as P7829,\n" +
+                "药品采购码 as P7830,\n" +
+                "药管平台码 as P7831,\n" +
+                "是否基本药物 as P7832\n" +
+                "from (\n" +
+                "select \n" +
+                "a.门诊号 as 就诊卡号,\n" +
+                "to_char(b.发生时间,'yyyy-mm-dd hh24:mi:ss') as 就诊日期,\n" +
+                "b.no as 门诊就诊流水号,\n" +
+                "a.姓名,\n" +
+                "c.no as 处方号,\n" +
+                "null as 处方开具时间,\n" +
+                "null as 处方类别代码,\n" +
+                "null as 处方项目分类代码,\n" +
+                "null as 处方项目分类名称,\n" +
+                "(select 编码 from 收费项目目录 where id=c.收费细目id) as 处方明细代码,\n" +
+                "(select 名称 from 收费项目目录 where id=c.收费细目id) as 处方明细名称,\n" +
+                "null as 中药类别名称,\n" +
+                "null as 中药类别代码,\n" +
+                "null as 草药脚注,\n" +
+                "null as 药物类型代码,\n" +
+                "null as 药物类型,\n" +
+                "null as 药物剂型代码,\n" +
+                "null as 药物剂型名称,\n" +
+                "null as 药品规格,\n" +
+                "nvl(d.执行频次,'-') as 药物使用频率,\n" +
+                "null as 药物使用总剂量,\n" +
+                "nvl(d.单次用量,0) as 药物使用次剂量,\n" +
+                "(select nvl(计算单位,'-') from 诊疗项目目录 where id=d.诊疗项目id) as 药物使用剂量单位,\n" +
+                "null as 药物使用途径代码,\n" +
+                "null as 药物使用途径,\n" +
+                "null as 皮试判别,\n" +
+                "null as 用药开始时间,\n" +
+                "null as 用药停止日期时间,\n" +
+                "null as 用药天数,\n" +
+                "null as 是否主药,\n" +
+                "null as 是否加急,\n" +
+                "null as 科室代码,\n" +
+                "null as 科室名称,\n" +
+                "null as 是否统一采购药品,\n" +
+                "null as 药品采购码,\n" +
+                "null as 药管平台码,\n" +
+                "null as 是否基本药物\n" +
+                "from 病人信息 a,病人挂号记录 b,门诊费用记录 c,病人医嘱记录 d\n" +
+                "where a.病人id=b.病人id and b.no=d.挂号单 and b.病人id=d.病人id and c.医嘱序号=d.id and c.病人id=d.病人id\n" +
+                "and c.收费类别 in ('5','6','7')\n" +
+                "and b.执行部门id=1065\n" +
+                "and b.发生时间 between sysdate-7 and sysdate\n" +
+                "\n" +
+                ")";
+
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Drug.class));
+    }
+
+    /**
+     * 获取发热门诊病例信息
+     */
+    public List<Fever> getFeverInfo() {
+        String sql = "select distinct\n" +
+                "医疗机构代码 as P900,\n" +
+                "机构名称 as P6891,\n" +
+                "医疗保险手册 as P686,\n" +
+                "健康卡号 as P800,\n" +
+                "就诊类型 as P7501,\n" +
+                "就诊卡号 as P7502,\n" +
+                "门诊就诊流水号 as P7000,\n" +
+                "姓名 as P4,\n" +
+                "性别 as P5,\n" +
+                "出生日期 as P6,\n" +
+                "年龄 as P7,\n" +
+                "国籍 as P12,\n" +
+                "民族 as P11,\n" +
+                "婚姻状况 as P8,\n" +
+                "职业 as P9,\n" +
+                "注册证件类型代码 as P7503,\n" +
+                "注册证件号码 as P13,\n" +
+                "现住址 as P801,\n" +
+                "住宅电话 as\tP802,\n" +
+                "现住址邮政编码 as\tP803,\n" +
+                "工作单位及地址 as P14,\n" +
+                "工作单位电话 as\tP15,\n" +
+                "工作单位邮政编码 as\tP16,\n" +
+                "联系人姓名 as\tP18,\n" +
+                "关系 as\tP19,\n" +
+                "联系人地址 as\tP20,\n" +
+                "联系人电话 as\tP21,\n" +
+                "就诊次数 as P7505,\n" +
+                "是否初诊 as\tP7520,\n" +
+                "是否转诊 as\tP7521,\n" +
+                "就诊科室代码 as P7504,\n" +
+                "就诊科室名称 as\tP7522,\n" +
+                "就诊日期 as P7506,\n" +
+                "主诉 as P7507,\n" +
+                "现病史 as P7523,\n" +
+                "体格检查 as P7524,\n" +
+                "症状代码 as\tP7525,\n" +
+                "症状名称 as P7526,\n" +
+                "症状描述 as\tP7527,\n" +
+                "发病日期 as P7528,\n" +
+                "是否留观 as P7529,\n" +
+                "门急诊诊断编码\tas P28,\n" +
+                "门急诊诊断描述 as P281,\n" +
+                "确诊标记 as P7530,\n" +
+                "医疗费用支付方式代码 as P1,\n" +
+                "总费用 as  P7508,\n" +
+                "挂号费 as  P7509,\n" +
+                "药品费 as  P7510,\n" +
+                "检查费 as  P7511,\n" +
+                "自付费用 as  P7512\n" +
+                "from (\n" +
+                "select \n" +
+                "'4484272059' as 医疗机构代码,\n" +
+                "'新晃侗族自治县人民医院' as 机构名称,\n" +
+                "null as 医疗保险手册,\n" +
+                "null as 健康卡号,\n" +
+                "'01' as 就诊类型,\n" +
+                "a.门诊号 as 就诊卡号,\n" +
+                "b.no as 门诊就诊流水号,\n" +
+                "a.姓名 as 姓名,\n" +
+                "nvl((select decode(编码,'3','0',编码) from 性别 where 名称=a.性别),'0') as 性别,\n" +
+                "to_char(a.出生日期,'yyyy-mm-dd') as 出生日期,\n" +
+                "null as 年龄,\n" +
+                "null as 国籍,\n" +
+                "null as 民族,\n" +
+                "null as 婚姻状况,\n" +
+                "null as 职业,\n" +
+                "'01' as 注册证件类型代码,\n" +
+                "nvl(a.身份证号,'-') as 注册证件号码,\n" +
+                "nvl(a.家庭地址,'-') as\t现住址,\n" +
+                "nvl(a.家庭电话,'-') as 住宅电话,\n" +
+                "nvl(a.家庭地址邮编,'-') as 现住址邮政编码,\n" +
+                "a.工作单位 as\t工作单位及地址,\n" +
+                "a.单位电话 as\t工作单位电话,\n" +
+                "a.单位邮编 as\t工作单位邮政编码,\n" +
+                "a.联系人姓名 as 联系人姓名,\n" +
+                "decode(a.联系人关系,'配偶','1','子','2','女','3','孙子、孙女或外孙子、外孙女','4','父母','5','祖父母或外祖父母','6','兄、弟、姐、妹','7','其他','8','8') as 关系,\n" +
+                "a.联系人地址 as 联系人地址,\n" +
+                "a.联系人电话\tas 联系人电话,\n" +
+                "1 as 就诊次数,\n" +
+                "null as 是否初诊,\n" +
+                "null as 是否转诊,\n" +
+                "null as 就诊科室代码,\n" +
+                "null as 就诊科室名称,\n" +
+                "to_char(b.发生时间,'yyyy-mm-dd hh24:mi:ss') as 就诊日期,\n" +
+                "'-' as 主诉,\n" +
+                "null as 现病史,\n" +
+                "null as 体格检查,\n" +
+                "null as 症状代码,\n" +
+                "'-' as 症状名称,\n" +
+                "null as 症状描述,\n" +
+                "null as 发病日期,\n" +
+                "'2' as 是否留观,\n" +
+                "null as 门急诊诊断编码,\n" +
+                "(select nvl(to_char(Wmsys.Wm_Concat(诊断描述)),'-') from 病人诊断记录 where 病人id=b.病人id and 主页id=b.id) as 门急诊诊断描述,\n" +
+                "null as 确诊标记,\n" +
+                "nvl((select decode(编码,'1','1','2','2','3','3','4','4','5','5','6','6','7','7','8','8','9') from 医疗付款方式 where 名称=a.医疗付款方式),'7') as 医疗费用支付方式代码,\n" +
+                "(select nvl(sum(b1.实收金额),0)\n" +
+                "from 病人医嘱记录 a1,门诊费用记录 b1\n" +
+                "where a1.id=b1.医嘱序号 and a1.挂号单=b.no\n" +
+                "and a1.病人id=b.病人id and b1.记录状态<>0) as 总费用,\n" +
+                "null as 挂号费,\n" +
+                "null as 药品费,\n" +
+                "null as 检查费,\n" +
+                "null as 自付费用\n" +
+                "from 病人信息 a,病人挂号记录 b\n" +
+                "where a.病人id=b.病人id \n" +
+                "and b.执行部门id=1065\n" +
+                "and b.发生时间 between sysdate-7 and sysdate\n" +
+                ")\n";
+
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Fever.class));
+    }
+
+    /**
+     * 获取实验室检验详细记录
+     */
+    public List<Lab> getLabInfo() {
+        String sql = "select \n" +
+                "就诊卡号 as P7502,\n" +
+                "就诊日期 as P7506,\n" +
+                "门诊就诊流水号 as P7000,\n" +
+                "姓名 as P4,\n" +
+                "检验机构代码 as P7601,\n" +
+                "检验机构名称 as P7602,\n" +
+                "检验报告单类别名称 as P7603,\n" +
+                "检验报告单类别代码 as P7604,\n" +
+                "检验申请单号 as P7605,\n" +
+                "检验申请单据名称 as P7606,\n" +
+                "检验日期 as P7607,\n" +
+                "检验报告日期 as P7608,\n" +
+                "检验送检日期 as P7609,\n" +
+                "检验采样日期 as P7610,\n" +
+                "检验标本号 as P7611,\n" +
+                "检验标本名称 as P7612,\n" +
+                "检验项目代码 as P7613,\n" +
+                "检验项目名称 as P7614,\n" +
+                "检验院内检验项目代码 as P7615,\n" +
+                "检验院内检验项目名称 as P7616,\n" +
+                "检验方法 as P7617,\n" +
+                "检验参考值 as P7618,\n" +
+                "检验计量单位 as P7619,\n" +
+                "检验结果数值 as  P7620,\n" +
+                "检验结果定性 as  P7621,\n" +
+                "检验报告单号 as P7622,\n" +
+                "检验项目明细代码 as P7623,\n" +
+                "检验项目明细名称 as P7624,\n" +
+                "检验结果异常标识 as P7625\n" +
+                "from (\n" +
+                "select \n" +
+                "a.门诊号 as 就诊卡号,\n" +
+                "to_char(b.发生时间,'yyyy-mm-dd hh24:mi:ss') as 就诊日期,\n" +
+                "b.no as 门诊就诊流水号,\n" +
+                "a.姓名,\n" +
+                "null as 检验机构代码,\n" +
+                "null as 检验机构名称,\n" +
+                "null as 检验报告单类别名称,\n" +
+                "null as 检验报告单类别代码,\n" +
+                "null as 检验申请单号,\n" +
+                "null as 检验申请单据名称,\n" +
+                "null as 检验日期,\n" +
+                "null as 检验报告日期,\n" +
+                "null as 检验送检日期,\n" +
+                "null as 检验采样日期,\n" +
+                "null as 检验标本号,\n" +
+                "null as 检验标本名称,\n" +
+                "null as 检验项目代码,\n" +
+                "null as 检验项目名称,\n" +
+                "(select 编码 from 诊治所见项目 where id=d.检验项目id) as 检验院内检验项目代码,\n" +
+                "(select 中文名 from 诊治所见项目 where id=d.检验项目id) as 检验院内检验项目名称,\n" +
+                "null as 检验方法,\n" +
+                "null as 检验参考值,\n" +
+                "null as 检验计量单位,\n" +
+                "(select decode(decode(类型,0,d.检验结果,null),'----',0,0) from 诊治所见项目 where id=d.检验项目id) as 检验结果数值,\n" +
+                "(select decode(类型,0,null,d.检验结果) from 诊治所见项目 where id=d.检验项目id) as 检验结果定性,\n" +
+                "c.id as 检验报告单号,\n" +
+                "null as 检验项目明细代码,\n" +
+                "null as 检验项目明细名称,\n" +
+                "decode(d.结果标志,1,1,2,22,3,21,4,2,1) as 检验结果异常标识\n" +
+                "from 病人信息 a,病人挂号记录 b,检验标本记录 c,检验普通结果 d\n" +
+                "where a.病人id=b.病人id and b.病人id=c.病人id and b.no=c.挂号单 and c.id=d.检验标本id\n" +
+                "and d.检验结果 is not null\n" +
+                "and b.执行部门id=1065\n" +
+                "and b.发生时间 between sysdate-7 and sysdate\n" +
+                ")";
+
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Lab.class));
+    }
+
+    /**
+     * 获取辅助检查记录
+     */
+    public List<Examine> getExamineInfo() {
+        String sql = "select \n" +
+                "就诊卡号 as P7502,\n" +
+                "就诊日期 as P7506,\n" +
+                "门诊就诊流水号 as P7000,\n" +
+                "姓名 as P4,\n" +
+                "辅助检查机构名称 as P7701,\n" +
+                "辅助检查机构代码 as P7702,\n" +
+                "辅助检查申请单号 as P7703,\n" +
+                "辅助检查报告单号 as P7704,\n" +
+                "辅助检查检查报告单名称 as P7705,\n" +
+                "辅助检查检查日期 as P7706,\n" +
+                "辅助检查类别代码 as P7707,\n" +
+                "辅助检查项目代码 as P7708,\n" +
+                "辅助检查类别名称 as P7709,\n" +
+                "辅助检查项目名称 as P7710,\n" +
+                "辅助检查院内检查项目代码 as P7711,\n" +
+                "辅助检查院内检查项目名称 as P7712,\n" +
+                "辅助检查检查部位 as P7713,\n" +
+                "辅助检查结果是否阳性 as P7714,\n" +
+                "辅助检查检查所见 as P7715,\n" +
+                "辅助检查检查结果异常标识 as P7716,\n" +
+                "辅助检查检查结论 as P7717\n" +
+                "from (\n" +
+                "select \n" +
+                "a.门诊号 as 就诊卡号,\n" +
+                "to_char(b.发生时间,'yyyy-mm-dd hh24:mi:ss') as 就诊日期,\n" +
+                "b.no as 门诊就诊流水号,\n" +
+                "a.姓名,\n" +
+                "null as 辅助检查机构名称,\n" +
+                "null as 辅助检查机构代码,\n" +
+                "null as 辅助检查申请单号,\n" +
+                "c.医嘱id as 辅助检查报告单号,\n" +
+                "null as 辅助检查检查报告单名称,\n" +
+                "null as 辅助检查检查日期,\n" +
+                "null as 辅助检查类别代码,\n" +
+                "null as 辅助检查项目代码,\n" +
+                "null as 辅助检查类别名称,\n" +
+                "null as 辅助检查项目名称,\n" +
+                "(select 编码 from 诊疗项目目录 where id=d.诊疗项目id) as 辅助检查院内检查项目代码,\n" +
+                "(select 名称 from 诊疗项目目录 where id=d.诊疗项目id) as 辅助检查院内检查项目名称,\n" +
+                "(select nvl(min(a1.标本部位),'-') from 病人医嘱记录 a1 where a1.相关id=c.医嘱id) as 辅助检查检查部位,\n" +
+                "null as 辅助检查结果是否阳性,\n" +
+                "(Select min(a1.内容文本) From 电子病历内容 a1,电子病历内容 b1,病人医嘱发送 c1,病人医嘱报告 d1\n" +
+                "where a1.父id=b1.id and b1.文件id=d1.病历id and c1.医嘱id=d1.医嘱id\n" +
+                "and c1.医嘱id=c.医嘱id and c1.发送号=c.发送号 and a1.终止版 = 0 and b1.内容文本='检查所见' and b1.对象类型=3) as 辅助检查检查所见,\n" +
+                "null as 辅助检查检查结果异常标识,\n" +
+                "(Select min(a1.内容文本) From 电子病历内容 a1,电子病历内容 b1,病人医嘱发送 c1,病人医嘱报告 d1\n" +
+                "where a1.父id=b1.id and b1.文件id=d1.病历id and c1.医嘱id=d1.医嘱id\n" +
+                "and c1.医嘱id=c.医嘱id and c1.发送号=c.发送号 and a1.终止版 = 0 and b1.内容文本='诊断意见' and b1.对象类型=3) as 辅助检查检查结论\n" +
+                "from 病人信息 a,病人挂号记录 b,影像检查记录 c,病人医嘱记录 d\n" +
+                "where a.病人id=b.病人id and  b.no=d.挂号单 and c.医嘱id=d.id\n" +
+                "and b.执行部门id=1065\n" +
+                "and b.发生时间 between sysdate-7 and sysdate\n" +
+                ")";
+
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Examine.class));
+    }
 
     public List<QueueInfo> getQueueInfo(String office, String room) {
 
